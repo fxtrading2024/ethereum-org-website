@@ -1,16 +1,18 @@
+import React from "react"
 import { useTranslation } from "next-i18next"
-import { Flex, type FlexProps } from "@chakra-ui/react"
+import { Flex } from "@chakra-ui/react"
 
 import { ButtonLink } from "@/components/Buttons"
 import CalloutBanner from "@/components/CalloutBanner"
 
 import { trackCustomEvent } from "@/lib/utils/matomo"
 
-import image from "@/public/enterprise-eth.png"
+import image from "@/public/images/enterprise-eth.png"
 
-export type StakingCommunityCalloutProps = FlexProps & {
-  id?: string
-}
+export type StakingCommunityCalloutProps =
+  React.HTMLAttributes<HTMLDivElement> & {
+    id?: string
+  }
 
 const StakingCommunityCallout = (props: StakingCommunityCalloutProps) => {
   const { t } = useTranslation("page-staking")
@@ -33,7 +35,7 @@ const StakingCommunityCallout = (props: StakingCommunityCalloutProps) => {
               eventName: "clicked discord",
             })
           }}
-          to="https://discord.gg/ethstaker"
+          href="https://discord.gg/ethstaker"
           w={{ base: "full", md: "auto" }}
         >
           Discord
@@ -46,7 +48,7 @@ const StakingCommunityCallout = (props: StakingCommunityCalloutProps) => {
               eventName: "clicked reddit",
             })
           }}
-          to="https://reddit.com/r/ethstaker"
+          href="https://reddit.com/r/ethstaker"
           w={{ base: "full", md: "auto" }}
         >
           Reddit
@@ -59,7 +61,7 @@ const StakingCommunityCallout = (props: StakingCommunityCalloutProps) => {
               eventName: "clicked website",
             })
           }}
-          to="https://ethstaker.cc"
+          href="https://ethstaker.cc"
           w={{ base: "full", md: "auto" }}
         >
           {t("common:rollup-component-website")}

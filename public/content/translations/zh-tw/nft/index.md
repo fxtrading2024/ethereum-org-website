@@ -5,7 +5,7 @@ lang: zh-tw
 template: use-cases
 emoji: ":frame_with_picture:"
 sidebarDepth: 2
-image: /infrastructure_transparent.png
+image: /images/infrastructure_transparent.png
 alt: 全息投影顯示的以太幣標誌。
 summaryPoint1: 一種用以太坊資產來呈現任何獨特事物的方式。
 summaryPoint2: 非同質化代幣賦予了內容創作者前所未有的強大力量。
@@ -56,7 +56,7 @@ summaryPoint3: 由建置於以太坊區塊鏈上的智慧型合約提供支援�
 
 <InfoBanner shouldSpaceBetween emoji=":eyes:" mt="8">
   <div>探索、購買或建立你個人的非同質化代幣藝術品/收藏品……</div>
-  <ButtonLink to="/dapps/?category=collectibles#explore">
+  <ButtonLink href="/dapps/?category=collectibles#explore">
     探索非同質化代幣藝術品
   </ButtonLink>
 </InfoBanner>
@@ -93,7 +93,7 @@ summaryPoint3: 由建置於以太坊區塊鏈上的智慧型合約提供支援�
 
 與非同質化代幣有關的安全問題最常與釣魚詐騙、智慧型合約漏洞或使用者錯誤（如無意間洩漏私密金鑰）有關，所以良好的錢包安全性對非同質化代幣持有者十分重要。
 
-<ButtonLink to="/security/">
+<ButtonLink href="/security/">
   更多安全相關資訊
 </ButtonLink>
 
@@ -103,7 +103,7 @@ summaryPoint3: 由建置於以太坊區塊鏈上的智慧型合約提供支援�
 - [Etherscan 的非同質化代幣追蹤器](https://etherscan.io/nft-top-contracts)
 - [ERC-721 代幣標準](/developers/docs/standards/tokens/erc-721/)
 - [ERC-1155 代幣標準](/developers/docs/standards/tokens/erc-1155/)
-- [熱門 NFT App 和工具](https://www.ethereum-ecosystem.com/blockchains/ethereum/nfts)
+- [熱門非同質化代幣應用程式和工具](https://www.ethereum-ecosystem.com/blockchains/ethereum/nfts)
 
 ## 其他資源 {#other-resources}
 

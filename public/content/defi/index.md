@@ -4,7 +4,7 @@ description: An overview of DeFi on Ethereum
 lang: en
 template: use-cases
 emoji: ":money_with_wings:"
-image: /use-cases/defi.png
+image: /images/use-cases/defi.png
 alt: An Eth logo made of lego bricks.
 sidebarDepth: 2
 summaryPoint1: A global, open alternative to the current financial system.
@@ -334,7 +334,7 @@ DeFi is an open-source movement. The DeFi protocols and applications are all ope
   More on building dapps
 </ButtonLink>
 
-## Further reading {#futher-reading}
+## Further reading {#further-reading}
 
 ### DeFi data {#defi-data}
 
@@ -355,3 +355,7 @@ DeFi is an open-source movement. The DeFi protocols and applications are all ope
 
 - [DeFi Llama Discord server](https://discord.defillama.com/)
 - [DeFi Pulse Discord server](https://discord.gg/Gx4TCTk)
+
+<Divider />
+
+<QuizWidget quizKey="defi" />

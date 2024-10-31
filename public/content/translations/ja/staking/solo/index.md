@@ -4,7 +4,7 @@ description: ETHのソロステーキングする方法の概要
 lang: ja
 template: staking
 emoji: ":money_with_wings:"
-image: /staking/leslie-solo.png
+image: /images/staking/leslie-solo.png
 alt: コンピュータチップ上にサイのレスリー
 sidebarDepth: 2
 summaryPoints:
@@ -190,7 +190,7 @@ ETHのソロステーキングを支援するツールやサービスは増え�
 
 アンロックして残高全体を受け取るには、自分のバリデータを除外する手続きを完了する必要があります。
 
-<ButtonLink to="/staking/withdrawals/">ステーキング引き出しの詳細</ButtonLink>
+<ButtonLink href="/staking/withdrawals/">ステーキング引き出しの詳細</ButtonLink>
 </ExpandableCard>
 
 ## 参考文献 {#further-reading}

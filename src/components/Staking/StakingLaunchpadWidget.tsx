@@ -1,15 +1,17 @@
 import { useState } from "react"
 import { useTranslation } from "next-i18next"
 import { FaTools } from "react-icons/fa"
-import { Box, Flex } from "@chakra-ui/react"
+import { Box } from "@chakra-ui/react"
 
 import { ButtonLink } from "@/components/Buttons"
 import Text from "@/components/OldText"
 import Translation from "@/components/Translation"
 
+import { cn } from "@/lib/utils/cn"
 import { trackCustomEvent } from "@/lib/utils/matomo"
 
 import Select, { type SelectOnChange } from "../Select"
+import { Flex } from "../ui/flex"
 
 type StakingDataOption = { label: string; value: string }
 
@@ -31,8 +33,8 @@ const StakingLaunchpadWidget = () => {
 
   const data = {
     testnet: {
-      label: "Goerli testnet",
-      url: "https://goerli.launchpad.ethereum.org",
+      label: `Holesky ${t("testnet")}`,
+      url: "https://holesky.launchpad.ethereum.org",
     },
     mainnet: {
       label: "Mainnet",
@@ -47,10 +49,10 @@ const StakingLaunchpadWidget = () => {
 
   return (
     <Flex
-      bg="layer2Gradient"
-      borderRadius="base"
-      flexDir="column"
-      p={{ base: 6, md: 8 }}
+      className={cn(
+        "flex-col rounded p-6 md:p-8",
+        "bg-gradient-to-r from-accent-a/10 to-accent-c/10 dark:from-accent-a/20 dark:to-accent-c-hover/20"
+      )}
     >
       <Text as="span" color="text200">
         <Translation id="page-staking:page-staking-launchpad-widget-span" />
@@ -72,7 +74,7 @@ const StakingLaunchpadWidget = () => {
       </Text>
       <Box mb={4}>
         <ButtonLink
-          to={data[selection].url}
+          href={data[selection].url}
           width={{ base: "full", md: "auto" }}
         >
           {selection === "mainnet"
@@ -85,7 +87,7 @@ const StakingLaunchpadWidget = () => {
       </Text>
       <Box>
         <ButtonLink
-          to="#node-and-client-tools"
+          href="#node-and-client-tools"
           variant="outline"
           width={{ base: "full", md: "auto" }}
           leftIcon={<FaTools />}

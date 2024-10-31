@@ -1,10 +1,10 @@
 import type { Options } from "mdast-util-toc"
 import type { NextPage } from "next"
 import type { AppProps } from "next/app"
-import { StaticImageData } from "next/image"
-import { SSRConfig } from "next-i18next"
+import type { StaticImageData } from "next/image"
+import type { SSRConfig } from "next-i18next"
 import type { ReactElement, ReactNode } from "react"
-import { Icon } from "@chakra-ui/react"
+import type { ColumnDef } from "@tanstack/react-table"
 
 import type {
   DocsFrontmatter,
@@ -18,11 +18,12 @@ import type {
 
 import type { BreadcrumbsProps } from "@/components/Breadcrumbs"
 import type { CallToActionProps } from "@/components/Hero/CallToAction"
-import { SimulatorNav } from "@/components/Simulator/interfaces"
+import type { SimulatorNav } from "@/components/Simulator/interfaces"
 
 import allQuizData from "@/data/quizzes"
 import allQuestionData from "@/data/quizzes/questionBank"
 
+import { screens } from "./utils/screen"
 import { WALLETS_FILTERS_DEFAULT } from "./constants"
 
 import { layoutMapping } from "@/pages/[...slug]"
@@ -32,7 +33,12 @@ export type Unpacked<T> = T extends (infer U)[] ? U : T
 
 export type ChildOnlyProp = { children?: ReactNode }
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+export type ClassNameProp = { className?: string }
+
+export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
+  P,
+  IP
+> & {
   getLayout?: (page: ReactElement<P>) => ReactNode
 }
 
@@ -44,11 +50,11 @@ export type Root = {
   children: ReactNode
   contentIsOutdated: boolean
   contentNotTranslated: boolean
-  lastDeployDate: string
+  lastDeployLocaleTimestamp: string
 }
 
 export type BasePageProps = SSRConfig &
-  Pick<Root, "contentNotTranslated" | "lastDeployDate">
+  Pick<Root, "contentNotTranslated" | "lastDeployLocaleTimestamp">
 
 export type Frontmatter = RoadmapFrontmatter &
   UpgradeFrontmatter &
@@ -273,12 +279,6 @@ export type LocaleDisplayInfo = {
   isBrowserDefault?: boolean
 }
 
-type TranslatedStats = {
-  tmMatch: number
-  default: number
-  total: number
-}
-
 /**
  * Translation cost report
  */
@@ -347,11 +347,13 @@ export type CostLeaderboardData = Pick<
   }
 
 // GitHub contributors
+
 export type Commit = {
   commit: {
     author: {
       name: string
       email: string
+      date: string
     }
   }
   author: {
@@ -418,7 +420,7 @@ type HeroButtonProps = Omit<CallToActionProps, "index">
  * or a string. (defaults to `StaticImageData`)
  */
 export type CommonHeroProps<
-  HeroImg extends StaticImageData | string = StaticImageData
+  HeroImg extends StaticImageData | string = StaticImageData,
 > = {
   /**
    * Decorative image displayed as the full background or an aside to
@@ -486,6 +488,15 @@ export type EthStoreResponse = Data<{
   effective_balances_sum_wei: number
 }>
 
+export type EthStakedResponse = {
+  result: {
+    rows?: {
+      cum_deposited_eth: number
+      time: string
+    }[]
+  }
+}
+
 export type EpochResponse = Data<{
   validatorscount: number
 }>
@@ -496,19 +507,9 @@ export type StakingStatsData = {
   apr: number
 }
 
-export type TimestampedData<T> = {
-  timestamp: number
-  value: T
-}
-
-export type MetricDataValue<Data, Value> =
-  | {
-      error: string
-    }
-  | {
-      data: Data
-      value: Value
-    }
+export type ValueOrError<T> =
+  | { value: T; timestamp?: number }
+  | { error: string }
 
 export type EtherscanNodeResponse = {
   result: {
@@ -533,27 +534,26 @@ export type DefiLlamaTVLResponse = {
   totalLiquidityUSD: number
 }[]
 
-export type MetricReturnData = MetricDataValue<
-  TimestampedData<number>[],
-  number
->
+export type MetricReturnData = ValueOrError<number>
 
-export type StatsBoxState = MetricDataValue<TimestampedData<number>[], string>
+export type StatsBoxState = ValueOrError<string>
 
-export type MetricSection =
+export type GrowThePieMetricKey = "txCount" | "txCostsMedianUsd"
+
+export type GrowThePieData = Record<GrowThePieMetricKey, MetricReturnData>
+
+export type MetricName =
+  | "ethPrice" // Use with `totalEthStaked` to convert ETH to USD
   | "totalEthStaked"
-  | "nodeCount"
   | "totalValueLocked"
-  | "txCount"
+  | GrowThePieMetricKey
 
-export type AllMetricData = Record<MetricSection, MetricReturnData>
+export type AllMetricData = Record<MetricName, MetricReturnData>
 
 export type StatsBoxMetric = {
-  title: string
-  description: string
+  label: string
+  description?: string
   state: StatsBoxState
-  buttonContainer: JSX.Element
-  range: string
   apiUrl: string
   apiProvider: string
 }
@@ -567,7 +567,7 @@ export type PhoneScreenProps = SimulatorNavProps & {
 }
 export type CommunityConference = {
   title: string
-  to: string
+  href: string
   location: string
   description: string
   startDate: string
@@ -580,10 +580,11 @@ export interface WalletData {
   last_updated: string
   name: string
   image: StaticImageData
-  brand_color: string
+  twBackgroundColor: string
+  twGradiantBrandColor: string
   url: string
   active_development_team: boolean
-  languages_supported: string[]
+  languages_supported: Lang[]
   twitter: string
   discord: string
   reddit: string
@@ -634,23 +635,54 @@ export interface WalletFilterData {
   description: TranslationKey | ""
 }
 
+export type FilterInputState = boolean | Lang | string | null
+
 export type FilterOption = {
   title: string
-  items: Array<{
-    title: string
-    icon: typeof Icon
-    description: string
-    filterKey: string | undefined
-    showOptions: boolean | undefined
-    options:
-      | Array<{
-          name: string
-          filterKey?: string
-          inputType: "checkbox"
-        }>
-      | []
-  }>
+  showFilterOption: boolean
+  items: Array<FilterItem>
 }
+
+type FilterItem = {
+  filterKey: string
+  filterLabel: string
+  description: string
+  inputState: FilterInputState
+  ignoreFilterReset?: boolean
+  input: FilterInput
+  options: Array<FilterOptionItem>
+}
+
+type FilterInput = (
+  filterIndex: number,
+  itemIndex: number,
+  state: FilterInputState,
+  updateFilterState: UpdateFilterState
+) => ReactElement
+
+type FilterOptionItem = {
+  filterKey: string
+  filterLabel: string
+  description: string
+  ignoreFilterReset?: boolean
+  inputState: FilterInputState
+  input: FilterOptionInput
+}
+
+type FilterOptionInput = (
+  filterIndex: number,
+  itemIndex: number,
+  optionIndex: number,
+  state: FilterInputState,
+  updateFilterState: UpdateFilterState
+) => ReactElement
+
+type UpdateFilterState = (
+  filterIndex: number,
+  itemIndex: number,
+  inputState: FilterInputState,
+  optionIndex?: number
+) => void
 
 export interface WalletPersonas {
   title: string
@@ -683,6 +715,14 @@ export interface WalletPersonas {
     new_to_crypto?: boolean
   }
 }
+
+export type TPresetFilters = WalletPersonas[]
+
+export type ProductTablePresetFilters = WalletPersonas[]
+
+export type ProductTableColumnDefs = ColumnDef<Wallet>
+
+export type ProductTableRow = Wallet
 
 export interface DropdownOption {
   label: string
@@ -720,7 +760,7 @@ export type NetworkUpgradeData = Record<string, NetworkUpgradeDetails>
 
 // Footer
 export type FooterLink = {
-  to: string
+  href: string
   text: TranslationKey
   isPartiallyActive?: boolean
 }
@@ -748,3 +788,110 @@ export type GHLabel = {
   name: string
   color: string
 }
+
+/**
+ * RSS Feed handling
+ */
+export type RSSItem = {
+  pubDate: string
+  title: string
+  source: string
+  link: string
+  sourceFeedUrl: string
+  sourceUrl: string
+  imgSrc?: string
+}
+
+export type RSSChannel = {
+  title: string[]
+  link: string[]
+  description: string[]
+  lastBuildDate: string[]
+  docs: string[]
+  generator: string[]
+  image: {
+    url: string[]
+    title: string[]
+    link: string[]
+  }[]
+  copyright: string[]
+  item: {
+    title: string[]
+    link: string[]
+    guid: string[]
+    pubDate: string[]
+    description: string[]
+    category: string[]
+    enclosure: {
+      $: {
+        url: string[]
+        length: string[]
+        type: string[]
+      }
+    }[]
+    "media:content": { $: { url: string } }[]
+  }[]
+}
+
+export type RSSResult = {
+  rss: {
+    channel: RSSChannel[]
+  }
+}
+
+export type AtomElement =
+  | string
+  | {
+      _?: string // children
+      $: {
+        href?: string
+      }
+    }
+export type AtomEntry = {
+  id: string[]
+  title: AtomElement[]
+  updated: string[]
+  content?: AtomElement[]
+  link?: AtomElement[]
+  summary?: AtomElement[]
+}
+
+export type AtomResult = {
+  feed: {
+    id: string[]
+    title: string[]
+    updated: string[]
+    generator: string[]
+    link: string[]
+    subtitle: string[]
+    icon?: string[]
+    entry: AtomEntry[]
+  }
+}
+
+export type CommunityBlog = {
+  href: string
+} & ({ name: string; feed?: string } | { name?: string; feed: string })
+
+type NestedDivs = {
+  div: NestedDivs[]
+}
+
+export type HTMLResult = {
+  html: {
+    body: Record<string, NestedDivs>[]
+  }
+}
+
+export type EventCardProps = {
+  title: string
+  href: string
+  startDate: string
+  endDate: string
+  description: string
+  className?: string
+  location: string
+  imageUrl?: string
+}
+
+export type BreakpointKey = keyof typeof screens

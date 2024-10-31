@@ -34,6 +34,10 @@ const quizzes = {
     title: "learn-quizzes:page-assets-merge",
     questions: ["h001", "h002", "h003", "h004", "h005"],
   },
+  daos: {
+    title: "DAOs",
+    questions: ["i001", "i002", "i003", "i004", "i005"],
+  },
   "solo-staking": {
     title: "solo",
     questions: ["j001", "j002", "j004", "j005", "j006", "j007", "j008"],
@@ -45,6 +49,14 @@ const quizzes = {
   "run-a-node": {
     title: "run-a-node",
     questions: ["l001", "l002", "l003", "l004", "l005", "l006"],
+  },
+  stablecoins: {
+    title: "stablecoins",
+    questions: ["m001", "m002", "m003", "m004", "m005"],
+  },
+  defi: {
+    title: "DeFi",
+    questions: ["n001", "n002", "n003", "n004", "n005"],
   },
 } satisfies RawQuizzes
 
@@ -72,11 +84,6 @@ export const ethereumBasicsQuizzes: QuizzesSection[] = [
   {
     id: "security",
     level: "beginner",
-    next: "merge",
-  },
-  {
-    id: "merge",
-    level: "intermediate",
   },
 ]
 
@@ -84,21 +91,41 @@ export const usingEthereumQuizzes: QuizzesSection[] = [
   {
     id: "nfts",
     level: "beginner",
-    next: "scaling",
+    next: "stablecoins",
   },
   {
-    id: "scaling",
-    level: "intermediate",
+    id: "stablecoins",
+    level: "beginner",
+    next: "defi",
+  },
+  {
+    id: "defi",
+    level: "beginner",
     next: "layer-2",
   },
   {
     id: "layer-2",
+    level: "intermediate",
+    next: "daos",
+  },
+  {
+    id: "daos",
     level: "intermediate",
     next: "run-a-node",
   },
   {
     id: "run-a-node",
     level: "intermediate",
+    next: "merge",
+  },
+  {
+    id: "merge",
+    level: "intermediate",
+    next: "scaling",
+  },
+  {
+    id: "scaling",
+    level: "advanced",
     next: "solo-staking",
   },
   {

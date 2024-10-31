@@ -5,7 +5,7 @@ lang: it
 template: use-cases
 emoji: ":frame_with_picture:"
 sidebarDepth: 3
-image: /infrastructure_transparent.png
+image: /images/infrastructure_transparent.png
 alt: Un logo Eth visualizzato tramite ologramma.
 summaryPoint1: Un modo pe rappresentare qualsiasi cosa sia univoca, come una risorsa basata su Ethereum.
 summaryPoint2: I NFT stanno dando ai creatori di contenuti più potere che mai.
@@ -56,7 +56,7 @@ Magari sei un artista che vuole condividere il proprio lavoro utilizzando gli NF
 
 <InfoBanner shouldSpaceBetween emoji=":eyes:" mt="8">
   <div>Esplora, acquista o crea opere d'arte/oggetti da collezione NFT...</div>
-  <ButtonLink to="/dapps/?category=collectibles#explore">
+  <ButtonLink href="/dapps/?category=collectibles#explore">
     Esplora l'arte NFT
   </ButtonLink>
 </InfoBanner>
@@ -93,7 +93,7 @@ La sicurezza di Ethereum deriva dal meccanismo di [proof-of-stake](/glossary/#po
 
 I problemi di sicurezza degli NFT sono molto spesso correlati alle truffe di phishing, alle vulnerabilità dei contratti intelligenti o agli errori degli utenti (come esporre inavvertitamente le chiavi private), per questo una buona sicurezza del portafoglio è essenziale per i proprietari di NFT.
 
-<ButtonLink to="/security/">
+<ButtonLink href="/security/">
   Di più sulla sicurezza
 </ButtonLink>
 
@@ -103,6 +103,11 @@ I problemi di sicurezza degli NFT sono molto spesso correlati alle truffe di phi
 - [Tracker EtherscanNFT](https://etherscan.io/nft-top-contracts)
 - [Standard token ERC-721](/developers/docs/standards/tokens/erc-721/)
 - [Standard token ERC-1155](/developers/docs/standards/tokens/erc-1155/)
+- [App e strumenti NFT popolari](https://www.ethereum-ecosystem.com/blockchains/ethereum/nfts)
+
+## Altre risorse {#other-resources}
+
+- [NFTScan](https://nftscan.com/)
 
 <Divider />
 

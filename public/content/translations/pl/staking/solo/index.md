@@ -4,7 +4,7 @@ description: Przegląd tego, jak rozpocząć samodzielne stakowanie ETH
 lang: pl
 template: staking
 emoji: ":money_with_wings:"
-image: /staking/leslie-solo.png
+image: /images/staking/leslie-solo.png
 alt: Nosorożec Leslie na własnym chipie komputerowym.
 sidebarDepth: 2
 summaryPoints:
@@ -190,7 +190,7 @@ Po ustawieniu poświadczeń wypłaty, płatności nagród (skumulowane ETH przez
 
 Aby odblokować i otrzymać całe saldo z powrotem, należy również zakończyć proces zamykania walidatora.
 
-<ButtonLink to="/staking/withdrawals/">Więcej o wypłatach ze stakingu</ButtonLink>
+<ButtonLink href="/staking/withdrawals/">Więcej o wypłatach ze stakingu</ButtonLink>
 </ExpandableCard>
 
 ## Dalsza lektura {#further-reading}

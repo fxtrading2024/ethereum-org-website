@@ -4,7 +4,7 @@ description: Berikut adalah gambaran buat kamu cara memulai solo penaruhan ETH
 lang: id
 template: staking
 emoji: ":money_with_wings:"
-image: /staking/leslie-solo.png
+image: /images/staking/leslie-solo.png
 alt: Leslie seekor badak dengan komputer chipnya sendiri.
 sidebarDepth: 2
 summaryPoints:
@@ -191,7 +191,7 @@ Setelah kredensial penarikan diatur, pembayaran imbalan (ETH yang terakumulasi d
 
 Untuk membuka dan menerima seluruh saldo Anda kembali, Anda juga harus menyelesaikan proses keluar dari validator Anda.
 
-<ButtonLink to="/staking/withdrawals/">Lebih lanjut tentang penarikan penaruhan</ButtonLink>
+<ButtonLink href="/staking/withdrawals/">Lebih lanjut tentang penarikan penaruhan</ButtonLink>
 </ExpandableCard>
 
 ## Bacaan lebih lanjut {#further-reading}

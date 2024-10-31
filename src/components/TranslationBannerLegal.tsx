@@ -23,7 +23,7 @@ const TranslationBannerLegal = ({
 }: TranslationBannerLegalProps) => {
   // Default to isOpen being false, and let the useEffect set this.
   const [isOpen, setIsOpen] = useState(false)
-  const [cardBoxShadow, text] = useToken("colors", ["cardBoxShadow", "text"])
+  const text = useToken("colors", "text")
 
   useEffect(() => {
     if (
@@ -74,10 +74,7 @@ const TranslationBannerLegal = ({
               <Translation id="translation-banner-no-bugs-title" />
               <Emoji
                 text=":bug:"
-                fontSize="3xl"
-                pt={2}
-                ms={2}
-                mb={{ base: 4, sm: "auto" }}
+                className="mb-4 ms-2 pt-2 text-3xl sm:mb-auto"
               />
             </Heading>
           </Flex>

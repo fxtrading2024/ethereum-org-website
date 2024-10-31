@@ -12,7 +12,7 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react"
 
-import { BasePageProps } from "@/lib/types"
+import { BasePageProps, Lang } from "@/lib/types"
 
 import ButtonLink from "@/components/Buttons/ButtonLink"
 import CalloutBanner from "@/components/CalloutBanner"
@@ -30,15 +30,19 @@ import Text from "@/components/OldText"
 import PageHero from "@/components/PageHero"
 import PageMetadata from "@/components/PageMetadata"
 import ProductList from "@/components/ProductList"
+import { StandaloneQuizWidget } from "@/components/Quiz/QuizWidget"
 import StablecoinAccordion from "@/components/StablecoinAccordion"
 import StablecoinBoxGrid from "@/components/StablecoinBoxGrid"
 import StablecoinsTable from "@/components/StablecoinsTable"
 import Tooltip from "@/components/Tooltip"
 import Translation from "@/components/Translation"
+import { Divider } from "@/components/ui/divider"
 
+import { cn } from "@/lib/utils/cn"
+import { dataLoader } from "@/lib/utils/data/dataLoader"
 import { existsNamespace } from "@/lib/utils/existsNamespace"
 import { getLastDeployDate } from "@/lib/utils/getLastDeployDate"
-import { runOnlyOnce } from "@/lib/utils/runOnlyOnce"
+import { getLocaleTimestamp } from "@/lib/utils/time"
 import { getRequiredNamespacesForPage } from "@/lib/utils/translations"
 
 import { BASE_TIME_UNIT } from "@/lib/constants"
@@ -47,16 +51,16 @@ import {
   fetchEthereumEcosystemData,
   fetchEthereumStablecoinsData,
 } from "@/lib/api/stablecoinsData"
-import summerfiImg from "@/public/dapps/summerfi.png"
-import dogeComputerImg from "@/public/doge-computer.png"
+import summerfiImg from "@/public/images/dapps/summerfi.png"
+import dogeComputerImg from "@/public/images/doge-computer.png"
 // -- daps
-import aaveImg from "@/public/stablecoins/aave.png"
-import compoundImg from "@/public/stablecoins/compound.png"
+import aaveImg from "@/public/images/stablecoins/aave.png"
+import compoundImg from "@/public/images/stablecoins/compound.png"
 // Static assets
-import daiLargeImg from "@/public/stablecoins/dai-large.png"
-import heroImg from "@/public/stablecoins/hero.png"
-import stablecoinsWtfImg from "@/public/stablecoins/tools/stablecoinswtf.png"
-import usdcLargeImg from "@/public/stablecoins/usdc-large.png"
+import daiLargeImg from "@/public/images/stablecoins/dai-large.png"
+import heroImg from "@/public/images/stablecoins/hero.png"
+import stablecoinsWtfImg from "@/public/images/stablecoins/tools/stablecoinswtf.png"
+import usdcLargeImg from "@/public/images/stablecoins/usdc-large.png"
 
 type EthereumDataResponse = Array<{
   id: string
@@ -87,12 +91,23 @@ type Props = BasePageProps & {
   marketsHasError: boolean
 }
 
-// Fetch external API data once to avoid hitting rate limit
-const ethereumEcosystemDataFetch = runOnlyOnce(fetchEthereumEcosystemData)
-const ethereumStablecoinsDataFetch = runOnlyOnce(fetchEthereumStablecoinsData)
+// In seconds
+const REVALIDATE_TIME = BASE_TIME_UNIT * 1
+
+const loadData = dataLoader<[EthereumDataResponse, StablecoinDataResponse]>(
+  [
+    ["ethereumEcosystemData", fetchEthereumEcosystemData],
+    ["ethereumStablecoinsData", fetchEthereumStablecoinsData],
+  ],
+  REVALIDATE_TIME * 1000
+)
 
 export const getStaticProps = (async ({ locale }) => {
   const lastDeployDate = getLastDeployDate()
+  const lastDeployLocaleTimestamp = getLocaleTimestamp(
+    locale as Lang,
+    lastDeployDate
+  )
 
   const requiredNamespaces = getRequiredNamespacesForPage("/stablecoins")
 
@@ -132,12 +147,7 @@ export const getStaticProps = (async ({ locale }) => {
   }
 
   try {
-    // Fetch token data in the Ethereum ecosystem
-    const ethereumEcosystemData: EthereumDataResponse =
-      await ethereumEcosystemDataFetch()
-    // Fetch token data for stablecoins
-    const stablecoinsData: StablecoinDataResponse =
-      await ethereumStablecoinsDataFetch()
+    const [ethereumEcosystemData, stablecoinsData] = await loadData()
 
     // Get the intersection of stablecoins and Ethereum tokens to only have a list of data for stablecoins in the Ethereum ecosystem
     const ethereumStablecoinData = stablecoinsData.filter(
@@ -177,18 +187,14 @@ export const getStaticProps = (async ({ locale }) => {
     props: {
       ...(await serverSideTranslations(locale!, requiredNamespaces)),
       contentNotTranslated,
-      lastDeployDate,
+      lastDeployLocaleTimestamp,
       markets,
       marketsHasError,
     },
-    // Updated once a week
-    revalidate: BASE_TIME_UNIT * 24 * 7,
   }
 }) satisfies GetStaticProps<Props>
 
 const Content = (props: BoxProps) => <Box py={4} px={8} w="full" {...props} />
-
-const Divider = () => <Box my={16} w="10%" h={1} bg="homeDivider" />
 
 const EditorsChoice = (props: FlexProps) => (
   <Flex
@@ -277,7 +283,10 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
         t("page-stablecoins-crypto-backed-con-1"),
         t("page-stablecoins-crypto-backed-con-2"),
       ],
-      links: [{ text: "Dai", url: "https://makerdao.com/en/" }],
+      links: [
+        { text: "DAI", url: "https://makerdao.com/en/" },
+        { text: "RAI", url: "https://reflexer.finance/" },
+      ],
     },
     {
       title: t("page-stablecoins-precious-metals"),
@@ -340,7 +349,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
       url: "https://aave.com",
       alt: t("aave-logo"),
       image: aaveImg,
-      width: "64px",
+      width: 64,
       name: "Aave",
       description: t("page-stablecoins-stablecoins-dapp-description-1"),
     },
@@ -349,7 +358,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
       url: "https://compound.finance",
       alt: t("compound-logo"),
       image: compoundImg,
-      width: "160px",
+      width: 160,
       name: "Compound",
       description: t("page-stablecoins-stablecoins-dapp-description-2"),
     },
@@ -358,7 +367,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
       url: "https://summer.fi/",
       alt: t("summerfi-logo"),
       image: summerfiImg,
-      width: "80px",
+      width: 80,
       name: "Summer.fi",
       description: t("page-stablecoins-stablecoins-dapp-description-4"),
     },
@@ -389,7 +398,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
       {
         content: t("page-stablecoins-how-they-work-button"),
         toId: "how",
-        variant: "outline",
+        variant: "outline" as const,
         matomo: {
           eventCategory: "stablecoins hero buttons",
           eventAction: "click",
@@ -414,7 +423,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
       <PageMetadata
         title={t("page-stablecoins-title")}
         description={t("page-stablecoins-meta-description")}
-        image="/stablecoins/hero.png"
+        image="/images/stablecoins/hero.png"
       />
       <PageHero isReverse content={heroContent} />
       <Divider />
@@ -453,29 +462,24 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
                 <HorizontalCard
                   emoji={token.emoji}
                   description={token.description}
-                  emojiSize={3}
+                  className="text-5xl"
                 />
               </Box>
             ))}
           </Box>
-          <GhostCard
-            maxW="640px"
-            me={{ base: 0, lg: 8 }}
-            mt={{ base: 16, lg: 2 }}
-          >
-            <Emoji text=":pizza:" fontSize="5xl" />
+          <GhostCard className="me-0 mt-16 max-w-[640px] lg:me-8 lg:mt-2">
+            <Emoji text=":pizza:" className="text-5xl" />
             <H3>{t("page-stablecoins-bitcoin-pizza")}</H3>
             <Text>{t("page-stablecoins-bitcoin-pizza-body")} </Text>
           </GhostCard>
         </Flex>
       </Content>
-      <Box
-        w="full"
-        py={16}
-        mt={8}
-        mb={8}
-        background="cardGradient"
-        boxShadow="inset 0px 1px 0px var(--eth-colors-tableItemBoxShadow)"
+      <div
+        className={cn(
+          "my-8 w-full py-16 shadow-inner",
+          "bg-gradient-to-r from-accent-a/10 to-accent-c/10",
+          "dark:bg-gradient-to-tr dark:from-primary/20 dark:from-20% dark:via-accent-a/20 dark:via-60% dark:to-accent-c/20 dark:to-95%"
+        )}
       >
         <Box mb={-8} py={4} px={8} w="full">
           <H2 mt={0}>{t("page-stablecoins-find-stablecoin")}</H2>
@@ -526,14 +530,18 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
                   </Text>
                   <Flex direction="column">
                     <Box>
-                      <ButtonLink mb={4} me={4} href="https://matcha.xyz/tokens/ethereum/0x6b175474e89094c44da98b954eedeac495271d0f?sellChain=1&sellAddress=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee">
+                      <ButtonLink
+                        mb={4}
+                        me={4}
+                        href="https://matcha.xyz/tokens/ethereum/0x6b175474e89094c44da98b954eedeac495271d0f?sellChain=1&sellAddress=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+                      >
                         {t("page-stablecoins-dai-banner-swap-button")}
                       </ButtonLink>
                     </Box>
                     <Box>
                       <ButtonLink
                         variant="outline"
-                        to="https://www.coinbase.com/price/dai#WhatIsDaiDAI"
+                        href="https://www.coinbase.com/price/dai#WhatIsDaiDAI"
                         isSecondary
                       >
                         {t("page-stablecoins-dai-banner-learn-button")}
@@ -584,7 +592,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
                   <Box>
                     <ButtonLink
                       variant="outline"
-                      to="https://www.coinbase.com/usdc"
+                      href="https://www.coinbase.com/usdc"
                       isSecondary
                     >
                       {t("page-stablecoins-usdc-banner-learn-button")}
@@ -626,7 +634,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
             hasError={marketsHasError}
           />
         </Box>
-      </Box>
+      </div>
       <Content id="explore">
         <H2>{t("page-stablecoins-get-stablecoins")}</H2>
       </Content>
@@ -642,9 +650,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
       <Divider />
       <Content>
         <CalloutBanner
-          mt={8}
-          mb={16}
-          mx={0}
+          className="mx-0 mb-16 mt-8"
           titleKey={t("page-stablecoins-stablecoins-dapp-callout-title")}
           descriptionKey={t(
             "page-stablecoins-stablecoins-dapp-callout-description"
@@ -653,19 +659,19 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
           imageWidth={600}
           alt={t("page-stablecoins-stablecoins-dapp-callout-image-alt")}
         >
-          <Flex flexFlow="wrap" gap="1em">
-            <ButtonLink to="/dapps/">
+          <div className="flex flex-wrap gap-4">
+            <ButtonLink href="/dapps/">
               {t("page-stablecoins-explore-dapps")}
             </ButtonLink>
             <ButtonLink
               variant="outline"
-              to="/defi/"
+              href="/defi/"
               whiteSpace="normal"
               isSecondary
             >
               {t("page-stablecoins-more-defi-button")}
             </ButtonLink>
-          </Flex>
+          </div>
         </CalloutBanner>
         <H2>{t("page-stablecoins-save-stablecoins")}</H2>
         <Flex
@@ -697,7 +703,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
             p={8}
             mx={{ base: "auto", lg: 0 }}
           >
-            <Emoji mb={4} text=":bank:" fontSize="5rem" />
+            <Emoji className="mb-4 text-[5rem]" text=":bank:" />
             <Text as="p" fontSize="64px" lineHeight="100%">
               {t("page-stablecoins-bank-apy")}
             </Text>
@@ -767,6 +773,7 @@ const StablecoinsPage = ({ markets, marketsHasError }) => {
         </Flex>
       </Box>
       <Content>
+        <StandaloneQuizWidget quizKey="stablecoins" />
         <FeedbackCard />
       </Content>
     </Page>

@@ -7,8 +7,6 @@ import type { Lang } from "@/lib/types"
 
 import { isLangRightToLeft } from "@/lib/utils/translations"
 
-import { DEFAULT_LOCALE } from "../lib/constants"
-
 import { ButtonLink } from "./Buttons"
 import Emoji from "./Emoji"
 
@@ -81,9 +79,7 @@ const TranslationBanner = ({
             </Heading>
             <Emoji
               text=":globe_showing_asia_australia:"
-              fontSize="2xl"
-              ms={2}
-              mb={{ base: 4, sm: "auto" }}
+              className="mb-4 ms-2 text-2xl sm:mb-auto"
             />
           </Flex>
           <p>{t(bodyTextId)}</p>
@@ -92,7 +88,7 @@ const TranslationBanner = ({
             flexDirection={{ base: "column", sm: "row" }}
           >
             <Box>
-              <ButtonLink to="/contributing/translation-program/">
+              <ButtonLink href="/contributing/translation-program/">
                 {t("translation-banner-button-translate-page")}
               </ButtonLink>
             </Box>
@@ -101,7 +97,7 @@ const TranslationBanner = ({
             {/* {!isPageContentEnglish && (
               <Box>
                 <ButtonLink
-                  to={originalPagePath}
+                  href={originalPagePath}
                   variant="outline"
                   ms={{ base: 0, sm: 2 }}
                   mt={{ base: 2, sm: 0 }}
